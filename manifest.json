@@ -1,0 +1,25 @@
+{
+  "name": "Tolu OS",
+  "short_name": "Tolu OS",
+  "description": "Summer 2025 personal operating system — schedule, fitness, meals, finance, goals.",
+  "start_url": "/tolu-os/",
+  "scope": "/tolu-os/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0C0C0E",
+  "theme_color": "#0C0C0E",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

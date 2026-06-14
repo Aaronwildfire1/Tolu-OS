@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tolu OS — Summer 2025</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tolu OS">
+<meta name="theme-color" content="#0C0C0E">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0C0C0E;
+  --surface: #141417;
+  --card: #1C1C21;
+  --border: #27272D;
+  --muted: #38383F;
+  --dim: #5A5A65;
+  --mid: #8A8A95;
+  --text: #E2E2EA;
+  --white: #F5F5FA;
+  --orange: #F26419;
+  --orange-glow: rgba(242,100,25,0.15);
+  --orange-border: rgba(242,100,25,0.3);
+  --green: #22C55E;
+  --green-dim: rgba(34,197,94,0.12);
+  --blue: #3B82F6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --yellow: #EAB308;
+  --yellow-dim: rgba(234,179,8,0.1);
+  --purple: #A855F7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --red: #EF4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+}
+
+/* NAV */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand-name { font-size: 18px; font-weight: 700; color: var(--white); letter-spacing: -0.02em; }
+.brand-dot { width: 7px; height: 7px; background: var(--orange); border-radius: 50%; margin-bottom: 2px; }
+.brand-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim); letter-spacing: 0.08em; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9.5px;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+.nav-btn .icon { font-size: 20px; line-height: 1; }
+.nav-btn.active { color: var(--orange); }
+
+/* PAGES */
+.page { display: none; padding: 16px; }
+.page.active { display: block; }
+
+/* TYPOGRAPHY */
+.section-head {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin: 20px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.section-head:first-child { margin-top: 0; }
+
+h2 { font-size: 20px; font-weight: 700; color: var(--white); }
+h3 { font-size: 15px; font-weight: 600; color: var(--white); }
+
+/* CARDS */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.card.accent { border-color: var(--orange-border); background: linear-gradient(135deg, var(--card), var(--orange-glow)); }
+.card.green { border-color: rgba(34,197,94,0.3); background: linear-gradient(135deg, var(--card), var(--green-dim)); }
+.card.blue { border-color: rgba(59,130,246,0.3); background: linear-gradient(135deg, var(--card), var(--blue-dim)); }
+.card.purple { border-color: rgba(168,85,247,0.3); background: linear-gradient(135deg, var(--card), var(--purple-dim)); }
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 380px) { .grid-3 { grid-template-columns: 1fr 1fr; } }
+
+/* STAT */
+.stat { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+.stat-val { display: block; font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 700; color: var(--orange); }
+.stat-lbl { display: block; font-size: 10px; color: var(--dim); margin-top: 2px; letter-spacing: 0.05em; }
+
+/* BADGE */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 9px; border-radius: 20px;
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.06em;
+}
+.badge-orange { background: var(--orange-glow); color: var(--orange); border: 1px solid var(--orange-border); }
+.badge-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+.badge-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+.badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+.badge-yellow { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); }
+.badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+
+/* INPUTS */
+input, select, textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  padding: 10px 12px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--orange); }
+input::placeholder { color: var(--dim); }
+select option { background: var(--surface); }
+textarea { resize: vertical; min-height: 70px; }
+
+label { display: block; font-size: 12px; color: var(--mid); margin-bottom: 5px; font-weight: 500; }
+
+.form-group { margin-bottom: 12px; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 18px; border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.15s;
+}
+.btn-primary { background: var(--orange); color: #fff; }
+.btn-primary:active { opacity: 0.85; }
+.btn-ghost { background: var(--card); border: 1px solid var(--border); color: var(--text); }
+.btn-ghost:active { background: var(--muted); }
+.btn-danger { background: var(--red-dim); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
+.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+.btn-full { width: 100%; }
+.btn-icon { padding: 8px; border-radius: 6px; }
+
+/* ROW LIST */
+.row-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+.row-item .icon { font-size: 18px; flex-shrink: 0; }
+.row-body { flex: 1; min-width: 0; }
+.row-title { font-size: 13px; font-weight: 500; color: var(--white); }
+.row-sub { font-size: 11px; color: var(--dim); margin-top: 2px; }
+.row-end { text-align: right; flex-shrink: 0; }
+
+/* PROGRESS BAR */
+.progress-track { height: 6px; background: var(--muted); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--orange), #F5953A); transition: width 0.4s ease; }
+.progress-fill.green { background: var(--green); }
+
+/* TIME ENTRY */
+.timeline-entry {
+  display: flex; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.timeline-entry:last-child { border-bottom: none; }
+.t-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--dim); min-width: 50px; padding-top: 1px; }
+.t-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.t-dot.orange { background: var(--orange); }
+.t-dot.green { background: var(--green); }
+.t-dot.blue { background: var(--blue); }
+.t-dot.yellow { background: var(--yellow); }
+.t-dot.purple { background: var(--purple); }
+.t-dot.muted { background: var(--muted); }
+.t-body { flex: 1; }
+.t-title { font-size: 13px; font-weight: 500; color: var(--white); }
+.t-note { font-size: 11px; color: var(--dim); margin-top: 2px; line-height: 1.4; }
+
+/* TABS (inline) */
+.tab-row { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px; }
+.tab-pill {
+  padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border); background: var(--card);
+  color: var(--mid); white-space: nowrap; transition: all 0.15s;
+}
+.tab-pill.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+/* REST TIMER */
+#rest-timer-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  display: none; align-items: center; justify-content: center;
+  z-index: 500; flex-direction: column; gap: 16px;
+}
+#rest-timer-overlay.show { display: flex; }
+.timer-circle {
+  width: 160px; height: 160px; border-radius: 50%;
+  border: 4px solid var(--orange);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--card);
+}
+#timer-display { font-family: 'DM Mono', monospace; font-size: 42px; font-weight: 700; color: var(--orange); }
+#timer-label { font-size: 12px; color: var(--dim); }
+
+/* EXERCISE SET LOG */
+.set-row {
+  display: grid; grid-template-columns: 40px 1fr 1fr auto;
+  gap: 8px; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.set-row:last-child { border-bottom: none; }
+.set-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--dim); text-align: center; }
+.set-input { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 13px; color: var(--text); text-align: center; }
+.set-input:focus { border-color: var(--orange); outline: none; }
+
+/* DIVIDER */
+hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+/* MEAL CARD */
+.meal-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin-bottom: 8px;
+}
+.meal-type { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--orange); margin-bottom: 4px; }
+.meal-name { font-size: 14px; font-weight: 600; color: var(--white); }
+.meal-macros { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.macro { font-size: 11px; color: var(--dim); }
+.macro span { color: var(--text); font-weight: 500; }
+
+/* CHECK ITEM */
+.check-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  cursor: pointer; margin-bottom: 6px; transition: border-color 0.15s;
+  user-select: none;
+}
+.check-row:active { border-color: var(--orange); }
+.check-box {
+  width: 20px; height: 20px; border-radius: 5px;
+  border: 1.5px solid var(--muted); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; transition: all 0.15s;
+}
+.check-row.done .check-box { background: var(--green); border-color: var(--green); color: #000; }
+.check-row.done .check-label { text-decoration: line-through; color: var(--dim); }
+.check-label { font-size: 13px; color: var(--text); flex: 1; }
+.check-cat { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim); }
+
+/* CART */
+.cart-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+}
+.cart-item.got { opacity: 0.5; }
+.cart-item.got .cart-name { text-decoration: line-through; }
+.cart-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--muted); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: pointer; transition: all 0.15s; }
+.cart-item.got .cart-check { background: var(--green); border-color: var(--green); color: #000; }
+.cart-name { flex: 1; font-size: 13px; color: var(--text); }
+.cart-qty { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--dim); }
+.cart-del { color: var(--dim); cursor: pointer; font-size: 16px; padding: 2px 6px; }
+
+/* TRIP HISTORY */
+.trip-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin-bottom: 8px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.trip-date { font-size: 12px; color: var(--dim); }
+.trip-amount { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 700; color: var(--orange); }
+
+/* BILL ROW */
+.bill-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+.bill-left { display: flex; align-items: center; gap: 10px; }
+.bill-icon { font-size: 18px; }
+.bill-name { font-size: 13px; font-weight: 500; color: var(--white); }
+.bill-due { font-size: 11px; color: var(--dim); }
+.bill-amount-input { background: transparent; border: none; font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 700; color: var(--orange); text-align: right; width: 90px; }
+.bill-amount-input:focus { outline: none; color: var(--yellow); }
+
+/* GOAL CARD */
+.goal-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.goal-title { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+.goal-note { font-size: 12px; color: var(--dim); margin-bottom: 10px; line-height: 1.5; }
+.goal-slider-row { display: flex; align-items: center; gap: 10px; }
+input[type=range] {
+  flex: 1; -webkit-appearance: none; height: 6px;
+  background: var(--muted); border-radius: 3px; outline: none;
+  border: none; padding: 0; width: auto;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px;
+  border-radius: 50%; background: var(--orange); cursor: pointer;
+}
+.goal-pct { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--orange); min-width: 36px; text-align: right; }
+
+/* FINANCE */
+.income-type { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* SCROLLABLE ROW */
+.scroll-x { overflow-x: auto; padding-bottom: 4px; display: flex; gap: 10px; }
+.scroll-x::-webkit-scrollbar { display: none; }
+
+/* ALERT */
+.alert {
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; margin-bottom: 10px; display: flex; gap: 8px; align-items: flex-start;
+}
+.alert-success { background: var(--green-dim); border: 1px solid rgba(34,197,94,0.3); color: var(--green); }
+.alert-warn { background: var(--yellow-dim); border: 1px solid rgba(234,179,8,0.3); color: var(--yellow); }
+
+/* HIKE */
+.hike-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 8px; }
+.hike-name { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+.hike-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.hike-desc { font-size: 12px; color: var(--dim); line-height: 1.6; }
+
+/* TOAST */
+#toast {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+  padding: 8px 18px; font-size: 13px; color: var(--text);
+  opacity: 0; transition: all 0.25s; z-index: 400; white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  display: none; align-items: flex-end; justify-content: center; z-index: 300;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--surface); border-top: 1px solid var(--border);
+  border-radius: 16px 16px 0 0; padding: 20px; width: 100%; max-height: 85vh; overflow-y: auto;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.modal-title { font-size: 16px; font-weight: 700; color: var(--white); }
+.modal-close { font-size: 22px; color: var(--dim); cursor: pointer; padding: 0 4px; }
+
+/* WEEK DAY SELECTOR */
+.day-selector { display: flex; gap: 6px; margin-bottom: 12px; }
+.day-btn {
+  flex: 1; padding: 8px 4px; background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; color: var(--dim);
+  cursor: pointer; text-align: center; transition: all 0.15s;
+}
+.day-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <span class="brand-name">Tolu OS</span>
+    <span class="brand-sub">Summer 2025</span>
+  </div>
+  <span id="topbar-date" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--dim)"></span>
+</div>
+
+<!-- PAGES -->
+
+<!-- ═══════════ SCHEDULE ═══════════ -->
+<div class="page active" id="page-schedule">
+
+  <div class="grid-3" style="margin-bottom:14px">
+    <div class="stat"><span class="stat-val">$20</span><span class="stat-lbl">Roofing /hr</span></div>
+    <div class="stat"><span class="stat-val">$25</span><span class="stat-lbl">Water /hr</span></div>
+    <div class="stat"><span class="stat-val">5h</span><span class="stat-lbl">Water /wk</span></div>
+  </div>
+
+  <div class="tab-row" id="sched-days">
+    <div class="tab-pill active" onclick="showSchedDay('mf',this)">Mon–Fri</div>
+    <div class="tab-pill" onclick="showSchedDay('sat',this)">Saturday</div>
+    <div class="tab-pill" onclick="showSchedDay('sun',this)">Sunday</div>
+  </div>
+
+  <!-- MON-FRI -->
+  <div id="sched-mf">
+    <div class="card accent" style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--dim);margin-bottom:4px">Reality check</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6">Roofing 7am–6pm + 30 min commute each way. You're home at <b style="color:var(--white)">6:30pm</b>. Gym nights (Mon/Wed/Fri) you're done training by <b style="color:var(--white)">8:05pm</b>. Tue/Thu are home calisthenics — no drive.</div>
+    </div>
+    <div class="section-head">Daily Timeline</div>
+    <div style="padding:0 4px">
+      <div class="timeline-entry"><span class="t-time">5:15am</span><div class="t-dot yellow"></div><div class="t-body"><div class="t-title">Wake up — no phone</div><div class="t-note">Water immediately. Sunlight exposure if possible.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">5:20am</span><div class="t-dot orange"></div><div class="t-body"><div class="t-title">Supplements + breakfast</div><div class="t-note">Vitamin C, D3, Omega-3, Creatine. ≥40g protein to carry you through roofing.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">5:35am</span><div class="t-dot blue"></div><div class="t-body"><div class="t-title">Deep work — 30 min</div><div class="t-note">Finance reading, Haskayne prep, Investopedia, skill-building. Rotate weekly focus.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">6:10am</span><div class="t-dot muted"></div><div class="t-body"><div class="t-title">Pack + commute prep</div><div class="t-note">Lunch prepped the night before. Audiobook queued for the drive.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">6:30am</span><div class="t-dot orange"></div><div class="t-body"><div class="t-title">Leave for roofing — 30 min drive</div><div class="t-note">Audiobook on. Arrive 7:00am.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">7:00am</span><div class="t-dot orange"></div><div class="t-body"><div class="t-title">Roofing shift begins</div><div class="t-note">$20/hr. Audiobooks during breaks.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">6:00pm</span><div class="t-dot muted"></div><div class="t-body"><div class="t-title">Drive home — 30 min</div><div class="t-note">Finish the chapter. Home by 6:30pm.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">6:30pm</span><div class="t-dot green"></div><div class="t-body"><div class="t-title">Shower + small pre-workout meal</div><div class="t-note">Banana, rice from meal prep. 20 min reset.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">6:50pm</span><div class="t-dot muted"></div><div class="t-body"><div class="t-title">Drive to gym (Mon/Wed/Fri) — 10–15 min</div><div class="t-note">Tue/Thu → home calisthenics instead. No commute.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">7:05pm</span><div class="t-dot green"></div><div class="t-body"><div class="t-title">Train — 45 min</div><div class="t-note">Tight rest periods. Get in, work, get out.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">7:50pm</span><div class="t-dot muted"></div><div class="t-body"><div class="t-title">Drive home — 10–15 min. Shake in the car.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">8:05pm</span><div class="t-dot orange"></div><div class="t-body"><div class="t-title">Dinner — prepped, eat immediately</div><div class="t-note">Post-workout window. No cooking from scratch on weeknights.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">8:30pm</span><div class="t-dot blue"></div><div class="t-body"><div class="t-title">Wind-down — 30 min max</div><div class="t-note">Journal, read, light finance content. Don't force deep work — you're tired.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">9:00pm</span><div class="t-dot muted"></div><div class="t-body"><div class="t-title">Prep tomorrow — 10 min</div><div class="t-note">Pack lunch, lay out clothes. Magnesium + ashwagandha.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">9:15pm</span><div class="t-dot purple"></div><div class="t-body"><div class="t-title">Phone down → lights out by 9:30pm</div><div class="t-note">5:15am wake-up = 7h45min sleep. Protect every minute.</div></div></div>
+    </div>
+  </div>
+
+  <!-- SATURDAY -->
+  <div id="sched-sat" style="display:none">
+    <div class="card" style="background:var(--blue-dim);border-color:rgba(59,130,246,0.3);margin-bottom:12px">
+      <div style="font-size:13px;color:var(--text);line-height:1.6">Water job 10am–4pm ($25/hr × 5h = <b style="color:var(--white)">$125</b>). 30 min commute each way. Best gym session of the week happens in the morning before the shift.</div>
+    </div>
+    <div class="section-head">Saturday Timeline</div>
+    <div style="padding:0 4px">
+      <div class="timeline-entry"><span class="t-time">7:00am</span><div class="t-dot yellow"></div><div class="t-body"><div class="t-title">Slow wake — earned rest</div><div class="t-note">No alarm if possible.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">7:30am</span><div class="t-dot orange"></div><div class="t-body"><div class="t-title">Supplements + big breakfast</div><div class="t-note">Full meal. Full morning stack.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">7:50am</span><div class="t-dot muted"></div><div class="t-body"><div class="t-title">Drive to gym — 10–15 min</div></div></div>
+      <div class="timeline-entry"><span class="t-time">8:05am</span><div class="t-dot green"></div><div class="t-body"><div class="t-title">Best session of the week — 75 min</div><div class="t-note">Full energy. Go heavy on compounds. Muay Thai bag work here if you want it.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">9:20am</span><div class="t-dot muted"></div><div class="t-body"><div class="t-title">Drive home — 10–15 min. Protein shake in car.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">9:35am</span><div class="t-dot muted"></div><div class="t-body"><div class="t-title">Shower + pack lunch</div><div class="t-note">Leave by 9:25am for water job — 30 min drive.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">10:00am</span><div class="t-dot blue"></div><div class="t-body"><div class="t-title">Water job — $25/hr</div><div class="t-note">Podcast / audiobook on commute both ways.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">4:00pm</span><div class="t-dot muted"></div><div class="t-body"><div class="t-title">Drive home — 30 min</div><div class="t-note">Home by ~4:30pm.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">4:30pm</span><div class="t-dot purple"></div><div class="t-body"><div class="t-title">Full solo window — 1.5–2h</div><div class="t-note">Hike, drive somewhere new, walk, decompress. No obligations.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">6:30pm</span><div class="t-dot orange"></div><div class="t-body"><div class="t-title">Cook a real meal + begin Sunday meal prep</div></div></div>
+      <div class="timeline-entry"><span class="t-time">8:30pm</span><div class="t-dot yellow"></div><div class="t-body"><div class="t-title">Wind down — plan the week</div><div class="t-note">Review finances, set 3 weekly intentions.</div></div></div>
+    </div>
+  </div>
+
+  <!-- SUNDAY -->
+  <div id="sched-sun" style="display:none">
+    <div class="card green" style="margin-bottom:12px">
+      <div style="font-size:13px;color:var(--text);line-height:1.6">Full rest day. Church 9am–12pm. Active recovery only. This is your recharge + reset day.</div>
+    </div>
+    <div class="section-head">Sunday Timeline</div>
+    <div style="padding:0 4px">
+      <div class="timeline-entry"><span class="t-time">7:30am</span><div class="t-dot yellow"></div><div class="t-body"><div class="t-title">Wake naturally</div><div class="t-note">No alarm. Supplements + light breakfast.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">9:00am</span><div class="t-dot purple"></div><div class="t-body"><div class="t-title">Church</div><div class="t-note">Present. No distractions.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">12:00pm</span><div class="t-dot green"></div><div class="t-body"><div class="t-title">Lunch + recovery</div><div class="t-note">Walk, stretch, foam roll. No gym.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">2:00pm</span><div class="t-dot blue"></div><div class="t-body"><div class="t-title">Weekly review — 30 min</div><div class="t-note">Savings progress. What worked. 3 intentions for next week.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">3:00pm</span><div class="t-dot yellow"></div><div class="t-body"><div class="t-title">Full solo time</div><div class="t-note">Hike, drive, read, nap. Pure recharge. No agenda.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">7:00pm</span><div class="t-dot orange"></div><div class="t-body"><div class="t-title">Meal prep for the week</div><div class="t-note">Bulk cook proteins, rice, veg. See Meals tab.</div></div></div>
+      <div class="timeline-entry"><span class="t-time">9:00pm</span><div class="t-dot purple"></div><div class="t-body"><div class="t-title">Early night — reset for Monday</div><div class="t-note">Magnesium + ashwagandha. Phone off.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ FITNESS ═══════════ -->
+<div class="page" id="page-fitness">
+
+  <div class="tab-row" id="fit-tabs">
+    <div class="tab-pill active" onclick="showFitTab('split',this)">Split</div>
+    <div class="tab-pill" onclick="showFitTab('log',this)">Log Workout</div>
+    <div class="tab-pill" onclick="showFitTab('history',this)">History</div>
+  </div>
+
+  <!-- SPLIT -->
+  <div id="fit-split">
+    <div class="card accent" style="margin-bottom:12px">
+      <div style="font-size:13px;line-height:1.6;color:var(--text)"><b style="color:var(--white)">Target:</b> 150 → 165–170 lbs lean bulk. Baki aesthetic.<br><span style="color:var(--dim)">Gym nights: Mon / Wed / Fri &nbsp;|&nbsp; Home calisthenics: Tue / Thu &nbsp;|&nbsp; Best session: Sat AM</span></div>
+    </div>
+
+    <div id="split-list"></div>
+
+    <button class="btn btn-ghost btn-full" onclick="openAddExerciseModal()" style="margin-top:8px">+ Add / Edit Exercise</button>
+  </div>
+
+  <!-- LOG -->
+  <div id="fit-log" style="display:none">
+    <div class="form-group">
+      <label>Select day to log</label>
+      <select id="log-day-select" onchange="loadLogDay()">
+        <option value="Monday">Monday — Push (Gym)</option>
+        <option value="Tuesday">Tuesday — Pull Calisthenics (Home)</option>
+        <option value="Wednesday">Wednesday — Legs (Gym)</option>
+        <option value="Thursday">Thursday — Core + Calisthenics (Home)</option>
+        <option value="Friday">Friday — Arms + Weak Points (Gym)</option>
+        <option value="Saturday">Saturday — Big Session (Gym)</option>
+      </select>
+    </div>
+
+    <div id="log-exercises"></div>
+
+    <button class="btn btn-primary btn-full" onclick="saveWorkoutLog()" style="margin-top:8px">Save Workout Log</button>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="fit-history" style="display:none">
+    <div id="workout-history-list"></div>
+    <div id="no-history" style="text-align:center;color:var(--dim);font-size:13px;padding:40px 0">No workouts logged yet.<br>Complete a session in Log Workout.</div>
+  </div>
+</div>
+
+<!-- ═══════════ MEALS ═══════════ -->
+<div class="page" id="page-meals">
+
+  <div class="day-selector" id="meal-day-btns">
+    <div class="day-btn active" onclick="showMealDay(0,this)">M</div>
+    <div class="day-btn" onclick="showMealDay(1,this)">T</div>
+    <div class="day-btn" onclick="showMealDay(2,this)">W</div>
+    <div class="day-btn" onclick="showMealDay(3,this)">Th</div>
+    <div class="day-btn" onclick="showMealDay(4,this)">F</div>
+    <div class="day-btn" onclick="showMealDay(5,this)">Sa</div>
+    <div class="day-btn" onclick="showMealDay(6,this)">Su</div>
+  </div>
+
+  <div id="meal-display"></div>
+
+  <div class="section-head">Prep Notes</div>
+  <div class="card" style="font-size:13px;color:var(--dim);line-height:1.7">
+    🍚 <b style="color:var(--text)">Sunday</b>: Bulk cook rice, chicken, ground beef, roast veg. Fills Mon–Wed.<br>
+    🥩 <b style="color:var(--text)">Wednesday</b>: Quick mid-week refresh — add more protein, restock veg.<br>
+    🥤 <b style="color:var(--text)">Target</b>: 175–185g protein on roofing days. Keep carbs up — roofing burns 600–900 cal extra.<br>
+    💧 <b style="color:var(--text)">Water</b>: Push to 5L on hot days. Electrolytes if sweating heavily.
+  </div>
+</div>
+
+<!-- ═══════════ CART ═══════════ -->
+<div class="page" id="page-cart">
+  <div class="tab-row">
+    <div class="tab-pill active" onclick="showCartTab('list',this)">Shopping List</div>
+    <div class="tab-pill" onclick="showCartTab('trips',this)">Trip History</div>
+  </div>
+
+  <div id="cart-list">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input id="cart-input" type="text" placeholder="Add item (e.g. chicken breast)..." onkeydown="if(event.key==='Enter')addCartItem()" style="flex:1">
+      <input id="cart-qty-input" type="text" placeholder="Qty" style="width:70px">
+      <button class="btn btn-primary btn-sm" onclick="addCartItem()">Add</button>
+    </div>
+
+    <div id="cart-items-list"></div>
+
+    <hr>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="clearChecked()">Clear got items</button>
+      <button class="btn btn-primary btn-sm" onclick="openTripModal()">✓ Done — Log total</button>
+    </div>
+  </div>
+
+  <div id="cart-trips" style="display:none">
+    <div id="trip-history-list"></div>
+    <div id="no-trips" style="text-align:center;color:var(--dim);font-size:13px;padding:40px 0">No trips logged yet.</div>
+
+    <div id="trip-avg-card" style="display:none" class="card accent">
+      <div style="font-size:11px;color:var(--dim);margin-bottom:4px">Average spend per trip</div>
+      <div id="trip-avg-val" style="font-family:'DM Mono',monospace;font-size:28px;font-weight:700;color:var(--orange)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ FINANCE ═══════════ -->
+<div class="page" id="page-finance">
+  <div class="tab-row">
+    <div class="tab-pill active" onclick="showFinTab('weekly',this)">This Week</div>
+    <div class="tab-pill" onclick="showFinTab('bills',this)">Bills</div>
+    <div class="tab-pill" onclick="showFinTab('tracker',this)">History</div>
+  </div>
+
+  <!-- WEEKLY INPUT -->
+  <div id="fin-weekly">
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--dim);margin-bottom:12px;font-family:'DM Mono',monospace;letter-spacing:0.08em">WEEK OF <span id="week-label"></span></div>
+
+      <div class="form-group">
+        <label>Roofing hours worked this week</label>
+        <input type="number" id="roof-hrs" placeholder="e.g. 50" min="0" oninput="calcWeekly()">
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--dim);margin-bottom:12px">
+        <span>Roofing pay</span>
+        <span id="roof-pay" style="color:var(--green);font-family:'DM Mono',monospace">$0.00</span>
+      </div>
+
+      <div style="font-size:12px;color:var(--dim);margin-bottom:4px">Water job this week?</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="btn btn-ghost btn-sm" id="water-yes-btn" onclick="toggleWater(true)">Yes (+$125)</button>
+        <button class="btn btn-ghost btn-sm" id="water-no-btn" onclick="toggleWater(false)">No</button>
+      </div>
+
+      <div class="form-group">
+        <label>Total spent this week ($)</label>
+        <input type="number" id="week-spent" placeholder="e.g. 180" min="0" oninput="calcWeekly()">
+      </div>
+
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <textarea id="week-notes" placeholder="What did you spend on? Any one-offs?"></textarea>
+      </div>
+
+      <hr>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:13px;color:var(--dim)">Total earned</span>
+        <span id="week-earned" style="font-family:'DM Mono',monospace;font-size:18px;color:var(--green)">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:13px;color:var(--dim)">Total spent</span>
+        <span id="week-spent-display" style="font-family:'DM Mono',monospace;font-size:18px;color:var(--red)">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;font-weight:600;color:var(--white)">Net saved</span>
+        <span id="week-net" style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:var(--orange)">$0.00</span>
+      </div>
+
+      <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="saveWeeklyRecord()">Save This Week</button>
+    </div>
+
+    <div class="card">
+      <div style="font-size:11px;color:var(--dim);margin-bottom:10px;font-family:'DM Mono',monospace;letter-spacing:0.08em">SUMMER TOTAL</div>
+      <div class="grid-2">
+        <div><div style="font-size:11px;color:var(--dim)">Earned</div><div id="total-earned" style="font-family:'DM Mono',monospace;font-size:20px;color:var(--green)">$0</div></div>
+        <div><div style="font-size:11px;color:var(--dim)">Spent</div><div id="total-spent" style="font-family:'DM Mono',monospace;font-size:20px;color:var(--red)">$0</div></div>
+      </div>
+      <div style="margin-top:10px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--dim);margin-bottom:4px">
+          <span>Summer savings goal</span><span id="goal-pct-label" style="color:var(--orange)">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="summer-progress" style="width:0%"></div></div>
+        <div style="font-size:11px;color:var(--dim);margin-top:4px">Goal: $15,000</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILLS -->
+  <div id="fin-bills" style="display:none">
+    <div class="alert alert-warn">💡 Tap the amount to edit. Enter your actual bill costs when you know them.</div>
+
+    <div class="section-head">Monthly Bills</div>
+
+    <div class="bill-row">
+      <div class="bill-left"><span class="bill-icon">🏠</span><div><div class="bill-name">Rent</div><div class="bill-due">Monthly</div></div></div>
+      <input class="bill-amount-input" id="bill-rent" type="number" placeholder="—" oninput="saveBills()">
+    </div>
+    <div class="bill-row">
+      <div class="bill-left"><span class="bill-icon">📱</span><div><div class="bill-name">Phone Bill</div><div class="bill-due">Monthly</div></div></div>
+      <input class="bill-amount-input" id="bill-phone" type="number" placeholder="—" oninput="saveBills()">
+    </div>
+    <div class="bill-row">
+      <div class="bill-left"><span class="bill-icon">🚗</span><div><div class="bill-name">Car Insurance</div><div class="bill-due">Monthly</div></div></div>
+      <input class="bill-amount-input" id="bill-car" type="number" placeholder="—" oninput="saveBills()">
+    </div>
+    <div class="bill-row">
+      <div class="bill-left"><span class="bill-icon">🛒</span><div><div class="bill-name">Groceries (est.)</div><div class="bill-due">Weekly × 4</div></div></div>
+      <input class="bill-amount-input" id="bill-groceries" type="number" placeholder="—" oninput="saveBills()">
+    </div>
+    <div class="bill-row">
+      <div class="bill-left"><span class="bill-icon">⛽</span><div><div class="bill-name">Gas</div><div class="bill-due">Weekly est.</div></div></div>
+      <input class="bill-amount-input" id="bill-gas" type="number" placeholder="—" oninput="saveBills()">
+    </div>
+    <div class="bill-row">
+      <div class="bill-left"><span class="bill-icon">🏋️</span><div><div class="bill-name">Gym Membership</div><div class="bill-due">Monthly</div></div></div>
+      <input class="bill-amount-input" id="bill-gym" type="number" placeholder="—" oninput="saveBills()">
+    </div>
+    <div class="bill-row">
+      <div class="bill-left"><span class="bill-icon">💊</span><div><div class="bill-name">Supplements</div><div class="bill-due">Monthly</div></div></div>
+      <input class="bill-amount-input" id="bill-supps" type="number" placeholder="—" oninput="saveBills()">
+    </div>
+
+    <hr>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:14px;font-weight:600;color:var(--white)">Est. monthly total</span>
+      <span id="bills-total" style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:var(--red)">$0</span>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="fin-tracker" style="display:none">
+    <div id="weekly-history-list"></div>
+    <div id="no-fin-history" style="text-align:center;color:var(--dim);font-size:13px;padding:40px 0">No weeks recorded yet.</div>
+  </div>
+</div>
+
+<!-- ═══════════ GOALS / SOLO ═══════════ -->
+<div class="page" id="page-goals">
+  <div class="tab-row">
+    <div class="tab-pill active" onclick="showGoalTab('growth',this)">Growth</div>
+    <div class="tab-pill" onclick="showGoalTab('checklist',this)">Daily Checklist</div>
+    <div class="tab-pill" onclick="showGoalTab('hikes',this)">Solo + Hikes</div>
+  </div>
+
+  <!-- GROWTH -->
+  <div id="goals-growth">
+    <div class="card accent" style="margin-bottom:14px">
+      <div style="font-size:13px;color:var(--text);line-height:1.6">These aren't boxes to tick. They're areas to <b style="color:var(--white)">improve</b> over 12 weeks. Slide honestly. Come back each Sunday and adjust.</div>
+    </div>
+
+    <div id="goals-list"></div>
+  </div>
+
+  <!-- DAILY CHECKLIST -->
+  <div id="goals-checklist" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-size:13px;color:var(--dim)" id="checklist-date"></div>
+      <button class="btn btn-ghost btn-sm" onclick="resetChecklist()">Reset day</button>
+    </div>
+
+    <div class="section-head">Morning</div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Woke up without phone</span><span class="check-cat">AM</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Drank 750ml water first thing</span><span class="check-cat">AM</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Took morning supplements</span><span class="check-cat">AM</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">30 min deep work block done</span><span class="check-cat">AM</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Protein breakfast ≥40g</span><span class="check-cat">AM</span></div>
+
+    <div class="section-head">Work Day</div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Audiobook on during commute</span><span class="check-cat">Work</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Drank 4L+ water today</span><span class="check-cat">Work</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Brought packed lunch</span><span class="check-cat">Work</span></div>
+
+    <div class="section-head">Evening</div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Trained (gym or calisthenics)</span><span class="check-cat">PM</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Took evening supplements</span><span class="check-cat">PM</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Ate post-workout meal</span><span class="check-cat">PM</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Prepped tomorrow (lunch + clothes)</span><span class="check-cat">PM</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Phone down by 9:15pm</span><span class="check-cat">PM</span></div>
+    <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">2-min journal entry</span><span class="check-cat">PM</span></div>
+
+    <hr>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;color:var(--dim)">Today</span>
+      <span id="check-progress" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--orange)">0 / 14</span>
+    </div>
+    <div class="progress-track" style="margin-top:6px"><div class="progress-fill" id="check-progress-bar" style="width:0%"></div></div>
+  </div>
+
+  <!-- SOLO + HIKES -->
+  <div id="goals-hikes" style="display:none">
+    <div class="card purple" style="margin-bottom:14px">
+      <div style="font-size:13px;color:var(--text);line-height:1.6">Solo windows: <b style="color:var(--white)">Sat 4:30–6:30pm</b> and <b style="color:var(--white)">Sun 3–7pm</b>. Guard them. These are maintenance, not waste.</div>
+    </div>
+
+    <div class="section-head">Alberta Hikes — Near Calgary</div>
+
+    <div class="hike-card">
+      <div class="hike-name">Ha Ling Peak</div>
+      <div class="hike-tags"><span class="badge badge-orange">Canmore</span><span class="badge badge-green">~3.5h</span><span class="badge badge-blue">8.2km return</span><span class="badge badge-yellow">Hard</span></div>
+      <div class="hike-desc">Steep, demanding, absolutely worth it. Summit views of the Bow Valley. Do this on a Sunday when you have time. The physical effort after a work week makes the summit hit different.</div>
+    </div>
+    <div class="hike-card">
+      <div class="hike-name">Grassi Lakes</div>
+      <div class="hike-tags"><span class="badge badge-orange">Canmore</span><span class="badge badge-green">~1.5h</span><span class="badge badge-blue">4km</span><span class="badge badge-green">Easy</span></div>
+      <div class="hike-desc">Turquoise lakes, petroglyphs, waterfalls. Perfect for the Saturday 4:30pm window. Visually rewarding without committing a full day.</div>
+    </div>
+    <div class="hike-card">
+      <div class="hike-name">Yamnuska Loop</div>
+      <div class="hike-tags"><span class="badge badge-orange">Bow Valley</span><span class="badge badge-green">~3–4h</span><span class="badge badge-blue">9km</span><span class="badge badge-yellow">Hard</span></div>
+      <div class="hike-desc">Ridge scrambling, dramatic exposure. Demands full mental presence — ideal for genuinely switching off. Sunday adventure.</div>
+    </div>
+    <div class="hike-card">
+      <div class="hike-name">Heart Mountain Loop</div>
+      <div class="hike-tags"><span class="badge badge-orange">Exshaw</span><span class="badge badge-green">~2.5h</span><span class="badge badge-blue">7km</span><span class="badge badge-purple">Medium</span></div>
+      <div class="hike-desc">45 min from Calgary. Underrated. Works in the Saturday 4:30–7pm window easily. Big views, not huge crowds.</div>
+    </div>
+    <div class="hike-card">
+      <div class="hike-name">Johnston Canyon + Ink Pots</div>
+      <div class="hike-tags"><span class="badge badge-orange">Banff</span><span class="badge badge-green">~3h</span><span class="badge badge-blue">11km</span><span class="badge badge-purple">Medium</span></div>
+      <div class="hike-desc">Canyon slot walk → open meadow springs. Full Sunday adventure — leave after church, back for meal prep. A genuine full reset.</div>
+    </div>
+
+    <div class="section-head">Hike Log</div>
+    <div id="hike-log-list"></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="hike-input" type="text" placeholder="Add a hike you did..." style="flex:1">
+      <input id="hike-date-input" type="date" style="width:130px">
+      <button class="btn btn-primary btn-sm" onclick="logHike()">Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────── REST TIMER OVERLAY ─────── -->
+<div id="rest-timer-overlay">
+  <div class="timer-circle">
+    <div id="timer-display">1:30</div>
+    <div id="timer-label">REST</div>
+  </div>
+  <div style="display:flex;gap:12px">
+    <button class="btn btn-ghost" onclick="adjustTimer(-15)">-15s</button>
+    <button class="btn btn-primary" id="timer-toggle-btn" onclick="toggleTimer()">Start</button>
+    <button class="btn btn-ghost" onclick="adjustTimer(15)">+15s</button>
+  </div>
+  <button class="btn btn-ghost" onclick="closeTimer()">Close</button>
+</div>
+
+<!-- ─────── EXERCISE MODAL ─────── -->
+<div class="modal-overlay" id="exercise-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add / Edit Exercise</span>
+      <span class="modal-close" onclick="closeExerciseModal()">✕</span>
+    </div>
+    <div class="form-group">
+      <label>Day</label>
+      <select id="ex-day">
+        <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+        <option>Thursday</option><option>Friday</option><option>Saturday</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Exercise name</label>
+      <input type="text" id="ex-name" placeholder="e.g. Bench Press">
+    </div>
+    <div class="grid-2" style="gap:10px;margin-bottom:12px">
+      <div class="form-group" style="margin-bottom:0">
+        <label>Sets</label>
+        <input type="number" id="ex-sets" value="3" min="1">
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>Target reps</label>
+        <input type="text" id="ex-reps" placeholder="e.g. 8–12">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Rest time (seconds)</label>
+      <input type="number" id="ex-rest" value="90" min="15">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="addExercise()">Add Exercise</button>
+  </div>
+</div>
+
+<!-- ─────── TRIP MODAL ─────── -->
+<div class="modal-overlay" id="trip-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Log Trip Total</span>
+      <span class="modal-close" onclick="closeTripModal()">✕</span>
+    </div>
+    <div class="form-group">
+      <label>Total spent on this trip ($)</label>
+      <input type="number" id="trip-total-input" placeholder="e.g. 87.50" step="0.01">
+    </div>
+    <div class="form-group">
+      <label>Store / notes (optional)</label>
+      <input type="text" id="trip-store-input" placeholder="e.g. Superstore">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="saveTrip()">Save Trip</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn active" onclick="showPage('schedule',this)"><span class="icon">📅</span>Schedule</button>
+  <button class="nav-btn" onclick="showPage('fitness',this)"><span class="icon">💪</span>Fitness</button>
+  <button class="nav-btn" onclick="showPage('meals',this)"><span class="icon">🍗</span>Meals</button>
+  <button class="nav-btn" onclick="showPage('cart',this)"><span class="icon">🛒</span>Cart</button>
+  <button class="nav-btn" onclick="showPage('finance',this)"><span class="icon">💰</span>Finance</button>
+  <button class="nav-btn" onclick="showPage('goals',this)"><span class="icon">🎯</span>Goals</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════
+// DATA
+// ══════════════════════════════════
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+const DEFAULT_SPLIT = {
+  Monday:    { label:'Push — Gym', exercises: [
+    {name:'Bench Press', sets:4, reps:'6–8', rest:90},
+    {name:'Overhead Press', sets:3, reps:'8–10', rest:90},
+    {name:'Incline DB Press', sets:3, reps:'10–12', rest:75},
+    {name:'Lateral Raises', sets:3, reps:'12–15', rest:60},
+    {name:'Tricep Pushdowns', sets:3, reps:'12–15', rest:60},
+  ]},
+  Tuesday:   { label:'Pull — Home Calisthenics', exercises: [
+    {name:'Pull-Ups (weighted if able)', sets:4, reps:'6–10', rest:90},
+    {name:'Inverted Rows', sets:3, reps:'10–12', rest:75},
+    {name:'Band Pull-Aparts', sets:3, reps:'15–20', rest:45},
+    {name:'Bicep Curls (DB)', sets:3, reps:'10–12', rest:60},
+  ]},
+  Wednesday: { label:'Legs — Gym', exercises: [
+    {name:'Squat', sets:4, reps:'6–8', rest:120},
+    {name:'Leg Press', sets:3, reps:'10–12', rest:90},
+    {name:'Romanian Deadlift', sets:3, reps:'10', rest:90},
+    {name:'Leg Curl', sets:3, reps:'12', rest:60},
+  ]},
+  Thursday:  { label:'Core + Calisthenics — Home', exercises: [
+    {name:'L-Sit Hold', sets:4, reps:'max hold', rest:60},
+    {name:'Hollow Body Hold', sets:3, reps:'30–45s', rest:45},
+    {name:'Ab Wheel Rollout', sets:3, reps:'8–12', rest:60},
+    {name:'Dips', sets:3, reps:'12–15', rest:60},
+  ]},
+  Friday:    { label:'Arms + Weak Points — Gym', exercises: [
+    {name:'Barbell Curl', sets:3, reps:'10–12', rest:60},
+    {name:'Skull Crushers', sets:3, reps:'10–12', rest:60},
+    {name:'Hammer Curls', sets:3, reps:'12', rest:60},
+    {name:'Face Pulls', sets:3, reps:'15–20', rest:45},
+    {name:'Forearm Curls', sets:3, reps:'15', rest:45},
+  ]},
+  Saturday:  { label:'Full Session — Gym (Best of the week)', exercises: [
+    {name:'Deadlift or Squat', sets:4, reps:'5–6', rest:150},
+    {name:'Weighted Pull-Ups', sets:4, reps:'6–8', rest:120},
+    {name:'Bench Press', sets:3, reps:'6–8', rest:90},
+    {name:'Barbell Row', sets:3, reps:'8–10', rest:90},
+    {name:'Muay Thai Bag Work', sets:3, reps:'3 min rounds', rest:60},
+  ]},
+};
+
+const MEALS = [
+  { day:'Monday', items:[
+    {type:'BREAKFAST',name:'Oats + 3 Eggs + Banana',protein:35,carbs:65,cals:520},
+    {type:'LUNCH',name:'Chicken Rice Bowl + Roasted Veg',protein:50,carbs:70,cals:620},
+    {type:'POST-WORKOUT SHAKE',name:'2 Scoops Whey + Whole Milk',protein:55,carbs:20,cals:410},
+    {type:'DINNER',name:'Ground Beef + Rice + Broccoli',protein:45,carbs:65,cals:580},
+  ]},
+  { day:'Tuesday', items:[
+    {type:'BREAKFAST',name:'Greek Yogurt + Granola + Berries',protein:30,carbs:60,cals:480},
+    {type:'LUNCH',name:'Chicken Wrap + Greek Yogurt',protein:48,carbs:55,cals:560},
+    {type:'POST-WORKOUT SHAKE',name:'2 Scoops Whey + Banana',protein:52,carbs:30,cals:390},
+    {type:'DINNER',name:'Salmon + Quinoa + Asparagus',protein:42,carbs:50,cals:540},
+  ]},
+  { day:'Wednesday', items:[
+    {type:'BREAKFAST',name:'5 Egg Scramble + Toast',protein:38,carbs:45,cals:510},
+    {type:'LUNCH',name:'Ground Beef Rice Bowl',protein:50,carbs:70,cals:610},
+    {type:'POST-WORKOUT SHAKE',name:'2 Scoops Whey + Oats',protein:55,carbs:40,cals:450},
+    {type:'DINNER',name:'Chicken Thighs + Sweet Potato + Spinach',protein:44,carbs:60,cals:560},
+  ]},
+  { day:'Thursday', items:[
+    {type:'BREAKFAST',name:'Oats + Whey + Peanut Butter',protein:40,carbs:65,cals:580},
+    {type:'LUNCH',name:'Tuna Wrap + Cottage Cheese',protein:52,carbs:45,cals:520},
+    {type:'POST-WORKOUT SHAKE',name:'2 Scoops Whey + Whole Milk',protein:55,carbs:20,cals:410},
+    {type:'DINNER',name:'Steak + Rice + Roasted Veg',protein:50,carbs:60,cals:610},
+  ]},
+  { day:'Friday', items:[
+    {type:'BREAKFAST',name:'4 Eggs + Avocado Toast',protein:32,carbs:40,cals:490},
+    {type:'LUNCH',name:'Chicken + Rice + Salad',protein:48,carbs:65,cals:580},
+    {type:'POST-WORKOUT SHAKE',name:'2 Scoops Whey + Banana',protein:52,carbs:30,cals:390},
+    {type:'DINNER',name:'Ground Turkey + Pasta + Tomato Sauce',protein:45,carbs:75,cals:600},
+  ]},
+  { day:'Saturday', items:[
+    {type:'BREAKFAST',name:'Big Breakfast — Eggs, Toast, Fruit',protein:35,carbs:70,cals:580},
+    {type:'PRE-WORKOUT',name:'Banana + PB',protein:8,carbs:35,cals:240},
+    {type:'POST-WORKOUT SHAKE',name:'2 Scoops Whey + Whole Milk',protein:55,carbs:20,cals:410},
+    {type:'DINNER',name:'Salmon + Quinoa + Asparagus',protein:46,carbs:55,cals:570},
+  ]},
+  { day:'Sunday', items:[
+    {type:'BREAKFAST',name:'Pancakes + Eggs + Fruit',protein:30,carbs:90,cals:620},
+    {type:'LUNCH',name:'Lean Beef Stir Fry + Rice',protein:45,carbs:70,cals:590},
+    {type:'MEAL PREP',name:'Bulk cook for the week',protein:0,carbs:0,cals:0},
+    {type:'DINNER',name:'Chicken + Roasted Veg + Rice',protein:44,carbs:65,cals:570},
+  ]},
+];
+
+const GOALS_DATA = [
+  { id:'discipline', title:'Daily Discipline', note:'How consistent are you being with the routine — sleep, supplements, deep work block, evening prep? Not perfection, just showing up.' },
+  { id:'finance', title:'Financial Intentionality', note:'Are you being deliberate with every dollar — saving first, tracking spending, not buying things you don\'t need?' },
+  { id:'training', title:'Training Consistency', note:'Are you getting every session in, even on hard days? Not how strong you are — just whether you showed up.' },
+  { id:'mindset', title:'Mental Clarity', note:'How clear-headed and focused are you feeling? Low social media use, less reactivity, more calm.' },
+  { id:'isolation', title:'Quality Solo Time', note:'Are you protecting your alone time — hikes, quiet mornings, no forced social obligations? This is maintenance.' },
+  { id:'nutrition', title:'Nutrition Quality', note:'Are you actually hitting protein targets, eating prepped food, staying hydrated on roofing days?' },
+  { id:'learning', title:'Learning Momentum', note:'Audiobooks on commutes, deep work each morning, reading in the evenings — is knowledge accumulating?' },
+  { id:'dopamine', title:'Dopamine Reset', note:'Staying off high-stimulation content (TikTok, Instagram scrolling), no substances, not chasing cheap rewards.' },
+];
+
+// ══════════════════════════════════
+// STATE (in-memory)
+// ══════════════════════════════════
+let state = {
+  split: JSON.parse(JSON.stringify(DEFAULT_SPLIT)),
+  workoutLogs: [],
+  cartItems: [],
+  tripHistory: [],
+  weeklyRecords: [],
+  bills: {},
+  goals: {},
+  hikeLog: [],
+};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('tolu-os-v1');
+    if (s) { const parsed = JSON.parse(s); state = {...state, ...parsed}; }
+  } catch(e) {}
+}
+function saveState() {
+  try { localStorage.setItem('tolu-os-v1', JSON.stringify(state)); } catch(e) {}
+}
+
+// ══════════════════════════════════
+// NAV
+// ══════════════════════════════════
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'fitness') renderSplit();
+  if (id === 'meals') showMealDay(0, document.querySelector('.day-btn'));
+  if (id === 'cart') renderCart();
+  if (id === 'finance') { renderFinHistory(); updateBillsTotal(); loadBills(); }
+  if (id === 'goals') { renderGoals(); updateCheckProgress(); }
+}
+
+// ══════════════════════════════════
+// SCHEDULE
+// ══════════════════════════════════
+function showSchedDay(id, btn) {
+  ['mf','sat','sun'].forEach(d => document.getElementById('sched-'+d).style.display = d===id?'block':'none');
+  document.querySelectorAll('#sched-days .tab-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════
+// FITNESS
+// ══════════════════════════════════
+function showFitTab(id, btn) {
+  ['split','log','history'].forEach(t => document.getElementById('fit-'+t).style.display = t===id?'block':'none');
+  document.querySelectorAll('#fit-tabs .tab-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (id === 'log') loadLogDay();
+  if (id === 'history') renderWorkoutHistory();
+}
+
+function renderSplit() {
+  const el = document.getElementById('split-list');
+  el.innerHTML = '';
+  Object.keys(state.split).forEach(day => {
+    const d = state.split[day];
+    const html = `
+      <div class="card" style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div><div style="font-size:14px;font-weight:600;color:var(--white)">${day}</div><div style="font-size:11px;color:var(--dim)">${d.label}</div></div>
+        </div>
+        ${d.exercises.map((ex,i) => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-size:13px;color:var(--text)">${ex.name}</div><div style="font-size:11px;color:var(--dim)">${ex.sets} × ${ex.reps} · ${ex.rest}s rest</div></div>
+            <button class="btn btn-icon btn-danger btn-sm" onclick="removeExercise('${day}',${i})">✕</button>
+          </div>
+        `).join('')}
+      </div>`;
+    el.innerHTML += html;
+  });
+}
+
+function openAddExerciseModal() { document.getElementById('exercise-modal').classList.add('show'); }
+function closeExerciseModal() { document.getElementById('exercise-modal').classList.remove('show'); }
+
+function addExercise() {
+  const day = document.getElementById('ex-day').value;
+  const name = document.getElementById('ex-name').value.trim();
+  if (!name) return toast('Enter an exercise name');
+  state.split[day].exercises.push({
+    name, sets: +document.getElementById('ex-sets').value,
+    reps: document.getElementById('ex-reps').value,
+    rest: +document.getElementById('ex-rest').value,
+  });
+  saveState(); renderSplit(); closeExerciseModal();
+  document.getElementById('ex-name').value = '';
+  toast('Exercise added to ' + day);
+}
+
+function removeExercise(day, idx) {
+  state.split[day].exercises.splice(idx, 1);
+  saveState(); renderSplit();
+}
+
+function loadLogDay() {
+  const day = document.getElementById('log-day-select').value;
+  const exercises = state.split[day]?.exercises || [];
+  const el = document.getElementById('log-exercises');
+  el.innerHTML = '';
+  exercises.forEach((ex, i) => {
+    let setsHtml = '';
+    for (let s = 0; s < ex.sets; s++) {
+      setsHtml += `
+        <div class="set-row">
+          <div class="set-num">Set ${s+1}</div>
+          <input class="set-input" type="number" placeholder="kg" id="log-${i}-${s}-weight" step="0.5">
+          <input class="set-input" type="number" placeholder="reps" id="log-${i}-${s}-reps">
+          <button class="btn btn-ghost btn-sm btn-icon" title="Rest timer" onclick="openTimer(${ex.rest})">⏱</button>
+        </div>`;
+    }
+    el.innerHTML += `
+      <div class="card" style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div><div style="font-size:14px;font-weight:600;color:var(--white)">${ex.name}</div><div style="font-size:11px;color:var(--dim)">Target: ${ex.reps}</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="openTimer(${ex.rest})">⏱ ${ex.rest}s</button>
+        </div>
+        <div style="display:grid;grid-template-columns:40px 1fr 1fr auto;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px">
+          <div style="font-size:10px;color:var(--dim);text-align:center">#</div>
+          <div style="font-size:10px;color:var(--dim);text-align:center">Weight (kg)</div>
+          <div style="font-size:10px;color:var(--dim);text-align:center">Reps</div>
+          <div></div>
+        </div>
+        ${setsHtml}
+      </div>`;
+  });
+  if (!exercises.length) el.innerHTML = '<div style="text-align:center;color:var(--dim);padding:30px 0;font-size:13px">No exercises for this day. Add some in Split view.</div>';
+}
+
+function saveWorkoutLog() {
+  const day = document.getElementById('log-day-select').value;
+  const exercises = state.split[day]?.exercises || [];
+  const sets = [];
+  exercises.forEach((ex, i) => {
+    const exSets = [];
+    for (let s = 0; s < ex.sets; s++) {
+      const w = document.getElementById(`log-${i}-${s}-weight`)?.value;
+      const r = document.getElementById(`log-${i}-${s}-reps`)?.value;
+      exSets.push({weight: w||'—', reps: r||'—'});
+    }
+    sets.push({name: ex.name, sets: exSets});
+  });
+  state.workoutLogs.unshift({ day, date: new Date().toLocaleDateString('en-CA'), exercises: sets });
+  saveState(); toast('Workout saved! 💪');
+}
+
+function renderWorkoutHistory() {
+  const el = document.getElementById('workout-history-list');
+  const none = document.getElementById('no-history');
+  if (!state.workoutLogs.length) { el.innerHTML=''; none.style.display='block'; return; }
+  none.style.display='none';
+  el.innerHTML = state.workoutLogs.map((log,idx) => `
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <div><div style="font-size:14px;font-weight:600;color:var(--white)">${log.day}</div><div style="font-size:11px;color:var(--dim)">${log.date}</div></div>
+        <button class="btn btn-danger btn-sm" onclick="deleteLog(${idx})">Delete</button>
+      </div>
+      ${log.exercises.map(ex => `
+        <div style="margin-bottom:8px">
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">${ex.name}</div>
+          ${ex.sets.map((s,i) => `<div style="font-size:11px;color:var(--dim);padding:2px 0">Set ${i+1}: ${s.weight}kg × ${s.reps} reps</div>`).join('')}
+        </div>
+      `).join('')}
+    </div>`).join('');
+}
+
+function deleteLog(idx) { state.workoutLogs.splice(idx,1); saveState(); renderWorkoutHistory(); }
+
+// ══════════════════════════════════
+// REST TIMER
+// ══════════════════════════════════
+let timerSeconds = 90, timerRunning = false, timerInterval = null, timerTotal = 90;
+
+function openTimer(secs) {
+  timerSeconds = secs; timerTotal = secs;
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById('timer-toggle-btn').textContent = 'Start';
+  document.getElementById('rest-timer-overlay').classList.add('show');
+  updateTimerDisplay();
+}
+function closeTimer() {
+  clearInterval(timerInterval); timerRunning = false;
+  document.getElementById('rest-timer-overlay').classList.remove('show');
+}
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval); timerRunning = false;
+    document.getElementById('timer-toggle-btn').textContent = 'Resume';
+  } else {
+    if (timerSeconds <= 0) { timerSeconds = timerTotal; }
+    timerRunning = true;
+    document.getElementById('timer-toggle-btn').textContent = 'Pause';
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      updateTimerDisplay();
+      if (timerSeconds <= 0) { clearInterval(timerInterval); timerRunning = false; document.getElementById('timer-toggle-btn').textContent = 'Done!'; }
+    }, 1000);
+  }
+}
+function adjustTimer(delta) { timerSeconds = Math.max(5, timerSeconds + delta); updateTimerDisplay(); }
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds/60), s = timerSeconds%60;
+  document.getElementById('timer-display').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+// ══════════════════════════════════
+// MEALS
+// ══════════════════════════════════
+function showMealDay(idx, btn) {
+  const m = MEALS[idx];
+  const el = document.getElementById('meal-display');
+  let totalProt = 0, totalCals = 0;
+  m.items.forEach(item => { totalProt += item.protein; totalCals += item.cals; });
+
+  el.innerHTML = `
+    <div class="card accent" style="margin-bottom:10px">
+      <div style="font-size:16px;font-weight:700;color:var(--white)">${m.day}</div>
+      <div style="display:flex;gap:16px;margin-top:6px">
+        <div><div style="font-size:11px;color:var(--dim)">Total protein</div><div style="font-family:'DM Mono',monospace;font-size:18px;color:var(--green)">${totalProt}g</div></div>
+        <div><div style="font-size:11px;color:var(--dim)">Total cals</div><div style="font-family:'DM Mono',monospace;font-size:18px;color:var(--orange)">${totalCals}</div></div>
+      </div>
+    </div>
+    ${m.items.map(item => `
+      <div class="meal-card">
+        <div class="meal-type">${item.type}</div>
+        <div class="meal-name">${item.name}</div>
+        ${item.protein > 0 ? `<div class="meal-macros">
+          <span class="macro">Protein: <span>${item.protein}g</span></span>
+          <span class="macro">Carbs: <span>${item.carbs}g</span></span>
+          <span class="macro">Cals: <span>~${item.cals}</span></span>
+        </div>` : '<div style="font-size:11px;color:var(--dim);margin-top:4px">Prepare in bulk for the week</div>'}
+      </div>`).join('')}`;
+
+  document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════
+// CART
+// ══════════════════════════════════
+function showCartTab(id, btn) {
+  document.getElementById('cart-list').style.display = id==='list'?'block':'none';
+  document.getElementById('cart-trips').style.display = id==='trips'?'block':'none';
+  document.querySelectorAll('#page-cart .tab-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (id === 'trips') renderTripHistory();
+}
+
+function addCartItem() {
+  const name = document.getElementById('cart-input').value.trim();
+  if (!name) return;
+  const qty = document.getElementById('cart-qty-input').value.trim() || '1';
+  state.cartItems.push({name, qty, got: false});
+  document.getElementById('cart-input').value = '';
+  document.getElementById('cart-qty-input').value = '';
+  saveState(); renderCart();
+}
+
+function renderCart() {
+  const el = document.getElementById('cart-items-list');
+  if (!state.cartItems.length) { el.innerHTML = '<div style="text-align:center;color:var(--dim);font-size:13px;padding:30px 0">List is empty. Add items above.</div>'; return; }
+  el.innerHTML = state.cartItems.map((item, i) => `
+    <div class="cart-item ${item.got?'got':''}" id="cart-row-${i}">
+      <div class="cart-check" onclick="toggleCartItem(${i})">${item.got?'✓':''}</div>
+      <span class="cart-name">${item.name}</span>
+      <span class="cart-qty">× ${item.qty}</span>
+      <span class="cart-del" onclick="removeCartItem(${i})">✕</span>
+    </div>`).join('');
+}
+
+function toggleCartItem(i) { state.cartItems[i].got = !state.cartItems[i].got; saveState(); renderCart(); }
+function removeCartItem(i) { state.cartItems.splice(i,1); saveState(); renderCart(); }
+function clearChecked() { state.cartItems = state.cartItems.filter(c => !c.got); saveState(); renderCart(); }
+
+function openTripModal() { document.getElementById('trip-modal').classList.add('show'); }
+function closeTripModal() { document.getElementById('trip-modal').classList.remove('show'); }
+
+function saveTrip() {
+  const total = parseFloat(document.getElementById('trip-total-input').value);
+  if (isNaN(total) || total <= 0) return toast('Enter a valid amount');
+  const store = document.getElementById('trip-store-input').value.trim();
+  state.tripHistory.unshift({ date: new Date().toLocaleDateString('en-CA'), total, store, items: state.cartItems.length });
+  state.cartItems = [];
+  document.getElementById('trip-total-input').value = '';
+  document.getElementById('trip-store-input').value = '';
+  saveState(); closeTripModal(); renderCart(); renderTripHistory();
+  toast('Trip logged!');
+}
+
+function renderTripHistory() {
+  const el = document.getElementById('trip-history-list');
+  const none = document.getElementById('no-trips');
+  const avg = document.getElementById('trip-avg-card');
+  if (!state.tripHistory.length) { el.innerHTML=''; none.style.display='block'; avg.style.display='none'; return; }
+  none.style.display='none';
+  const average = state.tripHistory.reduce((a,t) => a+t.total, 0) / state.tripHistory.length;
+  avg.style.display='block';
+  document.getElementById('trip-avg-val').textContent = '$' + average.toFixed(2);
+  el.innerHTML = state.tripHistory.map((t,i) => `
+    <div class="trip-card">
+      <div><div style="font-size:13px;font-weight:500;color:var(--white)">${t.store||'Grocery run'}</div><div class="trip-date">${t.date} · ${t.items} items</div></div>
+      <div style="text-align:right"><div class="trip-amount">$${t.total.toFixed(2)}</div><div style="font-size:10px;color:var(--dim)">${t.total > average ? '↑ above avg' : '↓ below avg'}</div></div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════
+// FINANCE
+// ══════════════════════════════════
+let waterIncluded = false;
+
+function showFinTab(id, btn) {
+  ['weekly','bills','tracker'].forEach(t => document.getElementById('fin-'+t).style.display = t===id?'block':'none');
+  document.querySelectorAll('#page-finance .tab-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (id === 'tracker') renderFinHistory();
+  if (id === 'bills') loadBills();
+}
+
+function toggleWater(yes) {
+  waterIncluded = yes;
+  document.getElementById('water-yes-btn').style.background = yes ? 'var(--orange)' : '';
+  document.getElementById('water-yes-btn').style.color = yes ? '#fff' : '';
+  document.getElementById('water-no-btn').style.background = !yes ? 'var(--orange)' : '';
+  document.getElementById('water-no-btn').style.color = !yes ? '#fff' : '';
+  calcWeekly();
+}
+
+function calcWeekly() {
+  const hrs = parseFloat(document.getElementById('roof-hrs').value) || 0;
+  const roofPay = hrs * 20;
+  const waterPay = waterIncluded ? 125 : 0;
+  const total = roofPay + waterPay;
+  const spent = parseFloat(document.getElementById('week-spent').value) || 0;
+  const net = total - spent;
+
+  document.getElementById('roof-pay').textContent = '$' + roofPay.toFixed(2);
+  document.getElementById('week-earned').textContent = '$' + total.toFixed(2);
+  document.getElementById('week-spent-display').textContent = '$' + spent.toFixed(2);
+  document.getElementById('week-net').textContent = '$' + net.toFixed(2);
+  document.getElementById('week-net').style.color = net >= 0 ? 'var(--orange)' : 'var(--red)';
+}
+
+function saveWeeklyRecord() {
+  const hrs = parseFloat(document.getElementById('roof-hrs').value) || 0;
+  if (!hrs && !waterIncluded) return toast('Enter hours worked first');
+  const roofPay = hrs * 20;
+  const waterPay = waterIncluded ? 125 : 0;
+  const earned = roofPay + waterPay;
+  const spent = parseFloat(document.getElementById('week-spent').value) || 0;
+  const net = earned - spent;
+  const notes = document.getElementById('week-notes').value.trim();
+
+  state.weeklyRecords.unshift({ date: new Date().toLocaleDateString('en-CA'), earned, spent, net, notes, roofHrs: hrs, water: waterIncluded });
+  saveState(); updateSummerTotals();
+  document.getElementById('roof-hrs').value = '';
+  document.getElementById('week-spent').value = '';
+  document.getElementById('week-notes').value = '';
+  waterIncluded = false;
+  toggleWater(false);
+  calcWeekly();
+  toast('Week saved! 🤑');
+}
+
+function updateSummerTotals() {
+  const totalEarned = state.weeklyRecords.reduce((a,r) => a+r.earned, 0);
+  const totalSpent = state.weeklyRecords.reduce((a,r) => a+r.spent, 0);
+  document.getElementById('total-earned').textContent = '$' + totalEarned.toFixed(0);
+  document.getElementById('total-spent').textContent = '$' + totalSpent.toFixed(0);
+  const pct = Math.min(100, (totalEarned - totalSpent) / 15000 * 100);
+  document.getElementById('summer-progress').style.width = pct + '%';
+  document.getElementById('goal-pct-label').textContent = pct.toFixed(0) + '%';
+}
+
+function renderFinHistory() {
+  const el = document.getElementById('weekly-history-list');
+  const none = document.getElementById('no-fin-history');
+  if (!state.weeklyRecords.length) { el.innerHTML=''; none.style.display='block'; return; }
+  none.style.display='none';
+  el.innerHTML = state.weeklyRecords.map((r,i) => `
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:var(--white)">Week of ${r.date}</div>
+        <button class="btn btn-danger btn-sm" onclick="deleteWeekRecord(${i})">✕</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+        <div><div style="font-size:10px;color:var(--dim)">Earned</div><div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--green)">$${r.earned.toFixed(0)}</div></div>
+        <div><div style="font-size:10px;color:var(--dim)">Spent</div><div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--red)">$${r.spent.toFixed(0)}</div></div>
+        <div><div style="font-size:10px;color:var(--dim)">Saved</div><div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--orange)">$${r.net.toFixed(0)}</div></div>
+      </div>
+      ${r.notes ? `<div style="font-size:11px;color:var(--dim);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">${r.notes}</div>` : ''}
+    </div>`).join('');
+  updateSummerTotals();
+}
+
+function deleteWeekRecord(idx) { state.weeklyRecords.splice(idx,1); saveState(); renderFinHistory(); }
+
+// BILLS
+const BILL_IDS = ['rent','phone','car','groceries','gas','gym','supps'];
+function saveBills() {
+  BILL_IDS.forEach(id => {
+    const val = document.getElementById('bill-'+id)?.value;
+    state.bills[id] = val ? parseFloat(val) : null;
+  });
+  saveState(); updateBillsTotal();
+}
+function loadBills() {
+  BILL_IDS.forEach(id => {
+    const el = document.getElementById('bill-'+id);
+    if (el && state.bills[id] != null) el.value = state.bills[id];
+  });
+  updateBillsTotal();
+}
+function updateBillsTotal() {
+  let total = 0;
+  BILL_IDS.forEach(id => {
+    const el = document.getElementById('bill-'+id);
+    if (el && el.value) {
+      let v = parseFloat(el.value);
+      if (id === 'groceries') v *= 4; // weekly × 4
+      if (id === 'gas') v *= 4;
+      total += v;
+    }
+  });
+  document.getElementById('bills-total').textContent = '$' + total.toFixed(0);
+}
+
+// ══════════════════════════════════
+// GOALS
+// ══════════════════════════════════
+function showGoalTab(id, btn) {
+  ['growth','checklist','hikes'].forEach(t => document.getElementById('goals-'+t).style.display = t===id?'block':'none');
+  document.querySelectorAll('#page-goals .tab-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (id === 'growth') renderGoals();
+  if (id === 'checklist') updateCheckProgress();
+  if (id === 'hikes') renderHikeLog();
+}
+
+function renderGoals() {
+  const el = document.getElementById('goals-list');
+  el.innerHTML = GOALS_DATA.map(g => {
+    const val = state.goals[g.id] || 0;
+    return `<div class="goal-card">
+      <div class="goal-title">${g.title}</div>
+      <div class="goal-note">${g.note}</div>
+      <div class="goal-slider-row">
+        <input type="range" min="0" max="100" value="${val}" oninput="updateGoal('${g.id}',this.value,this.nextElementSibling)">
+        <span class="goal-pct">${val}%</span>
+      </div>
+      <div class="progress-track" style="margin-top:8px"><div class="progress-fill" style="width:${val}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function updateGoal(id, val, display) {
+  state.goals[id] = +val;
+  display.textContent = val + '%';
+  const bar = display.closest('.goal-card').querySelector('.progress-fill');
+  if (bar) bar.style.width = val + '%';
+  saveState();
+}
+
+// CHECKLIST
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  el.querySelector('.check-box').textContent = el.classList.contains('done') ? '✓' : '';
+  updateCheckProgress();
+}
+function updateCheckProgress() {
+  const all = document.querySelectorAll('#goals-checklist .check-row');
+  const done = document.querySelectorAll('#goals-checklist .check-row.done');
+  const pct = all.length ? Math.round(done.length/all.length*100) : 0;
+  const el = document.getElementById('check-progress');
+  const bar = document.getElementById('check-progress-bar');
+  if (el) el.textContent = done.length + ' / ' + all.length;
+  if (bar) bar.style.width = pct + '%';
+}
+function resetChecklist() {
+  document.querySelectorAll('#goals-checklist .check-row').forEach(r => {
+    r.classList.remove('done');
+    r.querySelector('.check-box').textContent = '';
+  });
+  updateCheckProgress();
+}
+
+// HIKE LOG
+function logHike() {
+  const name = document.getElementById('hike-input').value.trim();
+  const date = document.getElementById('hike-date-input').value;
+  if (!name) return toast('Enter a hike name');
+  state.hikeLog.unshift({ name, date: date || new Date().toLocaleDateString('en-CA') });
+  document.getElementById('hike-input').value = '';
+  saveState(); renderHikeLog(); toast('Hike logged! 🏔️');
+}
+
+function renderHikeLog() {
+  const el = document.getElementById('hike-log-list');
+  if (!state.hikeLog.length) { el.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:12px 0">No hikes logged yet.</div>'; return; }
+  el.innerHTML = state.hikeLog.map((h,i) => `
+    <div class="row-item">
+      <span class="icon">🥾</span>
+      <div class="row-body"><div class="row-title">${h.name}</div><div class="row-sub">${h.date}</div></div>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="removeHike(${i})">✕</button>
+    </div>`).join('');
+}
+function removeHike(i) { state.hikeLog.splice(i,1); saveState(); renderHikeLog(); }
+
+// ══════════════════════════════════
+// TOAST
+// ══════════════════════════════════
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+function init() {
+  loadState();
+  // Date display
+  const now = new Date();
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('en-CA', {weekday:'short',month:'short',day:'numeric'});
+  document.getElementById('week-label').textContent = now.toLocaleDateString('en-CA', {month:'short',day:'numeric'});
+  document.getElementById('checklist-date').textContent = now.toLocaleDateString('en-CA', {weekday:'long',month:'long',day:'numeric'});
+  renderSplit();
+  updateSummerTotals();
+}
+
+init();
+
+// Register service worker for offline/PWA support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/tolu-os/sw.js')
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>
